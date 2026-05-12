@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>참석 신청 완료</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── 여기를 수정하세요 ── */
+    :root {
+      --redirect-url: "https://여기에URL입력.com"; /* JS에서 사용 */
+      --delay: 3; /* 초 단위 대기 시간 */
+      --accent: #E84125;
+      --bg: #f9f9f7;
+      --text: #1a1a1a;
+      --sub: #666;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      text-align: center;
+      padding: 60px 40px;
+      max-width: 420px;
+      width: 90%;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .icon {
+      width: 64px;
+      height: 64px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+    }
+
+    .icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    /* 카운트다운 링 */
+    .ring-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    svg.ring {
+      width: 56px;
+      height: 56px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track {
+      fill: none;
+      stroke: #e0e0e0;
+      stroke-width: 4;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 138.2; /* 2π × 22 */
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .count-num {
+      position: absolute;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .ring-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+    }
+
+    .redirect-hint {
+      font-size: 13px;
+      color: var(--sub);
+    }
+
+    .manual-link {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">
+    <svg viewBox="0 0 24 24">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>
+
+  <h1>제출이 완료되었습니다.</h1>
+  <p>잠시 후 아산 티처프러너 7기<br>자기소개 페이지로 이동합니다.</p>
+
+  <div class="ring-wrap">
+    <div class="ring-container">
+      <svg class="ring" viewBox="0 0 48 48">
+        <circle class="ring-track" cx="24" cy="24" r="20"/>
+        <circle class="ring-progress" id="ringProgress" cx="24" cy="24" r="20"/>
+      </svg>
+      <span class="count-num" id="countNum">3</span>
+    </div>
+    <span class="redirect-hint">초 후 자동 이동</span>
+  </div>
+
+  <br>
+  <a class="manual-link" id="manualLink">바로 이동하기 →</a>
+</div>
+
+<script>
+  /* ── 수정 포인트 ── */
+  const REDIRECT_URL = "https://teacherconnect.replit.app/";  // ← 이동할 URL
+  const DELAY = 3;                                    // ← 대기 초
+  /* ─────────────── */
+
+  const circumference = 2 * Math.PI * 20; // 125.66
+  const ring = document.getElementById("ringProgress");
+  const numEl = document.getElementById("countNum");
+  const link = document.getElementById("manualLink");
+
+  ring.style.strokeDasharray = circumference;
+  ring.style.strokeDashoffset = 0;
+  link.href = REDIRECT_URL;
+
+  let remaining = DELAY;
+
+  function tick() {
+    remaining--;
+    numEl.textContent = remaining;
+    const offset = circumference * (1 - remaining / DELAY);
+    ring.style.strokeDashoffset = offset;
+
+    if (remaining <= 0) {
+      window.location.href = REDIRECT_URL;
+    }
+  }
+
+  // 1초 뒤 첫 tick, 이후 매 1초
+  setTimeout(() => {
+    tick();
+    if (remaining > 0) {
+      const interval = setInterval(() => {
+        tick();
+        if (remaining <= 0) clearInterval(interval);
+      }, 1000);
+    }
+  }, 1000);
+</script>
+</body>
+</html>
